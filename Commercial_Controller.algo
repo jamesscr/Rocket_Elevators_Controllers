@@ -1,9 +1,24 @@
 Objects that need to be controlled:
-    Column: containing Elevators
-    Elevators (Cages): moving up or moving down inside column depending on selected floor
-    callButtons: button on each floor outside requesting Elevators to direction up or down
-    Doors: elevator doors, open and close with movement of elevator
-    Floor request buttons: button inside selecting destination floor
+  - Battery
+  - Column: containing Elevators
+  - Elevators (Cages): moving up or moving down inside column depending on selected floor
+  - callButtons: button on each floor outside requesting Elevators to direction up or down
+  - Doors: elevator doors, open and close with movement of elevator
+  - Floor request buttons: button inside selecting destination floor
+  - Floor display
+  - Elevator state: current floor and a list of next stops.
+  - Elevators move floor by floor at fixed speed, deleting next stop from their state when reaching that floor.
+  - A passenger sends a request from floor "initial" to "destination".
+  - The system will look for a nearest elevator to floor A that is moving in the correct direction from "initial" to "destination".
+  - The chosen elevator will add floor "initial" to its list of next stops.
+  - The system will guide the passenger to wait for the chosen elevator, if found.
+  - The passenger request remains active until an elevator stops at floor "initial"
+    to pick up the passenger; then the request is deleted.
+  - add three more conditions to the specification to make it complete:
+  - 1 If an elevator has no more stops to serve, it remains idle at its last visited floor.
+  - 2 If no elevators are now found that can accept a passenger request, the request waits
+    until it is accepted by an elevator. The passenger will be notified at that time.
+  - 3 The system will look for the nearest elevator that is either idle, or moving in the correct direction.
 
 SET selectedElevator TO NULL 
 SET elevatorPosition TO NULL
