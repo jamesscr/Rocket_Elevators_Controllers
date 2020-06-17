@@ -1,0 +1,75 @@
+Objects that need to be controlled:
+    Column: containing Elevators
+    Elevators (Cages): moving up or moving down inside column depending on selected floor
+    callButtons: button on each floor outside requesting Elevators to direction up or down
+    Doors: elevator doors, open and close with movement of elevator
+    Floor request buttons: button inside selecting destination floor
+
+SET selectedElevator TO NULL 
+SET elevatorPosition TO NULL
+SET selectedFloor FROM the array OF buildingFloors (1 TO 10)
+SET callButton GET requestElevator to selectedFloor
+
+SEQUENCE requestElevator WITH current floor, direction
+    CALL moveElevator USING current floor, direction
+    CALL doorOpenClose WITH current floor, direction 
+    CALL chooseFloorButton USING current floor, direction
+END SEQUENCE
+
+SEQUENCE findBestElevator USING current floor, direction
+    IF selectedElevator IS NULL
+        CALL doorOpenClose WITH current floor, direction
+    ELSE 
+        CALL moveElevator TO current floor, direction
+    ENDIF
+END SEQUENCE
+
+SEQUENCE moveElevator USING current floor, direction  
+    FOR EACH floor OF buildingFloors
+        IF requestElevator is < 10 THEN 
+           decrement WITH buildingFloors by 1 TO requestElevator floor, direction
+        ELSE requestElevator is > 1 THEN
+           increment TO buildingFloors by 1 TO requestElevator floor, direction
+        ENDIF
+END SEQUENCE
+
+SEQUENCE elevatorArrived TO current floor, direction
+    CALL doorOpenClose USING selectedElevator floor, direction
+END SEQUENCE
+
+SEQUENCE doorOpenClose USING current floor, direction
+    CASE callbutton is pressed GET requestElevator TO selectedFloor
+        INIT doorOpen to open the door timer 10 second THEN doorClose 
+        INIT doorClose to close the door 
+        
+             default sequence
+    ENDCASE 
+
+END SEQUENCE
+
+SEQUENCE doorOpenClose USING current floor, direction
+    CASE callbutton is pressed GET requestElevator TO selectedFloor
+        INIT doorOpen to open the door timer 10 second THEN doorClose 
+        INIT doorClose to close the door 
+        
+             default sequence
+    ENDCASE 
+
+END SEQUENCE
+
+SEQUENCE pressButton USING current floor, direction
+   
+END SEQUENCE
+
+SEQUENCE pressButton USING current floor, direction
+   
+END SEQUENCE
+
+SEQUENCE pressButton USING current floor, direction
+   
+END SEQUENCE
+
+
+
+
+
