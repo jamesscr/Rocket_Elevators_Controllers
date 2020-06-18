@@ -10,10 +10,9 @@ SET selectedElevator TO "IDLE[Stop]"
 SET buildingFloors = select FROM [1 TO 10]
 SET callButton GET Receive a pick-up request
 SET elevatorState WITH list OF [Stop].
-SET 
 
 "Querying the state of the elevator"
-SEQUENCE elevatorState WITH floor, position, direction
+SEQUENCE elevatorState USING floor, position, direction
     REPEAT 
           elevatorState
     UNTIL requestElevator USING floor, direction
