@@ -7,37 +7,48 @@ Objects that need to be controlled:
 - Elevator state: current floor and a list of next stops.
 
 SET selectedElevator TO "IDLE[Stop]" 
-SET buildingFloors WITH array OF [1,2,3,4,5,6,7,8,9,10]
-SET callButton GET requestElevator to selectedFloor
-SET ElevatorState WITH floor and [Stop]
+SET buildingFloors = select FROM [1 TO 10]
+SET callButton GET Receive a pick-up request
+SET elevatorState WITH list OF [Stop].
+SET 
 
-SEQUENCE ElevatorState WITH floor, position, direction
-    INIT ElevatorState WITH floor and list OF [Stop].
+"Querying the state of the elevator"
+SEQUENCE elevatorState WITH floor, position, direction
+    REPEAT 
+          elevatorState
     UNTIL requestElevator USING floor, direction
 END SEQUENCE
 
+SEQUENCE IDLE USING current floor, direction
+    SET Receives an update about the status of an elevator
+END SEQUENCE
+
+SEQUENCE moveElevator USING current floor, direction
+    CASE in parallel
+        elevators move step by step to their next stops with a specified `duration` time stepping
+        take the closest elevator for every request
+        add the next stops to the selected elevator and update the elevator state
+        every incoming request
+    ENDCASE
+    CALL requestFloorButton USING current floor, direction
+END SEQUENCE
+
 SEQUENCE findBestElevator USING current floor, direction
-    IF requestElevator THEN
-    move floor by floor at fixed speed, deleting next stop from their state when reaching that floor.
+    GET requestElevator THEN
+        CALL moveElevator USING current floor, direction
     ENDIF
 END SEQUENCE
 
 SEQUENCE requestElevator USING current floor, direction
-    INIT requestButton;
+    GET requestButton is pressed
     CALL requestButton USING current floor, direction
 END SEQUENCE
 
-SEQUENCE requestButton USING current floor, direction  
+SEQUENCE requestButton USING current floor, direction
+    CALL buildingFloors USING current floor, direction
+    SET IDLE =  "initial" TO "destination" WITH requestButton
     SET moveElevator sends a request from floor "initial" to "destination".
-END SEQUENCE
-
-SEQUENCE moveElevator USING current floor, direction
-    IF requestElevator
-    CALL findBestElevator WITH floor, direction 
-    will look for a nearest elevator to floor "initial" that is moving in the correct direction from "initial" to "destination".
-    ELSE
-    move from "initial" to "destination"
-    ENDIF
+    CALL  moveElevator WITH floor, direction
 END SEQUENCE
 
 SEQUENCE chosenElevator USING current floor, direction
@@ -64,13 +75,13 @@ SEQUENCE hasArrived USING current floor, direction
 END SEQUENCE
 
 SEQUENCE doorOpenClose USING current floor, direction
-    1 INIT doorOpen T open the door timer after 10 second 
-    2 INIT doorClose TO close the door 
-    3 wait CALL requestFloorButton
+    1 INIT doorOpen when the door is opened, moveElevator suspended until the door would be closed.
+    2 INIT doorClose after 10 second, when the elevator is on its next stop, wait 10 second, if someone want to enter without sending pickupRequest and the elevator’s door is still opened 
+    IF the door is opened which will be suspended until the door would be closed.
+    ENDIF
 END SEQUENCE
 
 SEQUENCE requestFloorButton USING current floor, direction
-    SET destination USING current floor, direction
     CALL moveElevator TO destination floor, direction
 END SEQUENCE
 
