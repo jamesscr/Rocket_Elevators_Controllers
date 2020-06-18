@@ -1,46 +1,75 @@
-Objects that need to be controlled:
-- Column: containing Elevators
-- Elevators (Cages): moving up or moving down inside column depending on   selected floor
-- callButtons: button on each floor outside requesting Elevators to direction up or down
-- Doors: elevator doors, open and close with movement of elevator
-- Floor request buttons: button inside selecting destination floor
-- Elevator state: current floor and a list of next stops.
+_____________________________________"Residential"______________________________________
+                  
+"column: Contains two elevators in a column"
+"elevator: moving up or moving down inside column depending on selected floor"
+"elevatorDoor: The door of the elevator"
+"elevatorState: position of elevator (moving, stoped, idle)"
+"requestButton: button on each floor outside requesting Elevators to direction up or down"
+"requestButtonFloor: button inside selecting destination floor"
+"closeDoorButton: The button that makes the door close sooner"
+"openDoorButton: The button that makes the door stay open"
+"direction: Where the elevator is going (up or down) from [1 TO 10]"
+"MoveElevator: Is the elevator in moving or idling"
 
-SET selectedElevator TO "IDLE[Stop]" 
-SET buildingFloors = select FROM [1 TO 10]
-SET callButton GET Receive a pick-up request
-SET elevatorState WITH list OF [Stop].
+____________________________________"elevatorSystem"_____________________________________
 
-"Querying the state of the elevator"
-SEQUENCE elevatorState USING floor, position, direction
-    REPEAT 
-          elevatorState
-    UNTIL requestElevator USING floor, direction
+SEQUENCE elevatorState USING floor, direction
+    SET direction to up
+    SET direction to down
+    SET IDLE TO standby
+    FOR direction WITH at array[1 TO 10]
+        FOR elevatorState TO IDLE
+          IF elevatorState is NULL
+             standby
+          ELSE 
+             CALL requestElevator USING floor, direction
+          ENDIF   
+        END FOR
+    END FOR
+END SEQUENCE
+
+SEQUENCE requestElevator USING current floor, direction
+    GET requestButton PUSH floor at array[1 TO 10]
+        CASE requestElevator OF 
+            elevator is moving in the same direction :
+                        CALL hasArrived TO destination floor, direction
+            elevator is closer to destination :
+                        CALL moveElevator TO destination floor, from[array[1 TO 10]]
+            elevator is idle at the same floor :
+                        CALL addWaitlist WITH floor, direction
+        ENDCASE
 END SEQUENCE
 
 SEQUENCE IDLE USING current floor, direction
-    SET Receives an update about the status of an elevator
+    If requestElevator is TO NULL
+    CALL elevatorState TO floor, direction
+    ELSE moveElevator TO floor, direction
+    ENDIF
+END SEQUENCE
+
+SEQUENCE hasArrived USING current floor, direction
+    SET doorOpen USING current floor, direction
+    The passenger request remains active until an elevator stops at floor "initial" to pick up the passenger; then the request is deleted.
+    CALL moveElevator TO destination floor, direction
+END SEQUENCE
+
+SEQUENCE addWaitlist USING current floor, direction
+    GET addWaitlist will guide the passenger to wait for the requestElevator, 
+    if found then
+     CALL doorOpen with USING current floor, direction
+    ELSE
+        CALL moveElevator USING current floor, direction
+    ENDIF
 END SEQUENCE
 
 SEQUENCE moveElevator USING current floor, direction
     CASE in parallel
         elevators move step by step to their next stops with a specified `duration` time stepping
         take the closest elevator for every request
+        
         add the next stops to the selected elevator and update the elevator state
         every incoming request
     ENDCASE
-    CALL requestFloorButton USING current floor, direction
-END SEQUENCE
-
-SEQUENCE findBestElevator USING current floor, direction
-    GET requestElevator THEN
-        CALL moveElevator USING current floor, direction
-    ENDIF
-END SEQUENCE
-
-SEQUENCE requestElevator USING current floor, direction
-    GET requestButton is pressed
-    CALL requestButton USING current floor, direction
 END SEQUENCE
 
 SEQUENCE requestButton USING current floor, direction
@@ -52,10 +81,6 @@ END SEQUENCE
 
 SEQUENCE chosenElevator USING current floor, direction
     SET elevatorSystem will add floor "initial" to its list of next stops.
-END SEQUENCE
-
-SEQUENCE waitSystem USING current floor, direction
-    SET hasArrived will guide the passenger to wait for the chosen elevator, if found.
 END SEQUENCE 
 
 SEQUENCE modeStandby USING current floor, direction
@@ -68,16 +93,16 @@ SEQUENCE modeStandby USING current floor, direction
     ENDCASE
 END SEQUENCE
 
-SEQUENCE hasArrived USING current floor, direction
-    SET doorOpen USING current floor, direction
-    The passenger request remains active until an elevator stops at floor "initial" to pick up the passenger; then the request is deleted.
+SEQUENCE doorOpen WITH floor
+    SET doorOpen to open
+    WHILE SLEEP 10 seconds
+        door is_Blocked NOT EQUAL false
+    ENDWHILE 
+    CALL doorClose USING elevator
 END SEQUENCE
 
-SEQUENCE doorOpenClose USING current floor, direction
-    1 INIT doorOpen when the door is opened, moveElevator suspended until the door would be closed.
-    2 INIT doorClose after 10 second, when the elevator is on its next stop, wait 10 second, if someone want to enter without sending pickupRequest and the elevator’s door is still opened 
-    IF the door is opened which will be suspended until the door would be closed.
-    ENDIF
+SEQUENCE doorClose WITH floor
+    SET doorClose to close 
 END SEQUENCE
 
 SEQUENCE requestFloorButton USING current floor, direction
