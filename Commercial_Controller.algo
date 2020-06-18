@@ -1,87 +1,81 @@
 Objects that need to be controlled:
-  - Battery
-  - Column: containing Elevators
-  - Elevators (Cages): moving up or moving down inside column depending on selected floor
-  - callButtons: button on each floor outside requesting Elevators to direction up or down
-  - Doors: elevator doors, open and close with movement of elevator
-  - Floor request buttons: button inside selecting destination floor
-  - Floor display
-  - Elevator state: current floor and a list of next stops.
-  - Elevators move floor by floor at fixed speed, deleting next stop from their state when reaching that floor.
-  - A passenger sends a request from floor "initial" to "destination".
-  - The system will look for a nearest elevator to floor A that is moving in the correct direction from "initial" to "destination".
-  - The chosen elevator will add floor "initial" to its list of next stops.
-  - The system will guide the passenger to wait for the chosen elevator, if found.
-  - The passenger request remains active until an elevator stops at floor "initial"
-    to pick up the passenger; then the request is deleted.
-  - add three more conditions to the specification to make it complete:
-  - 1 If an elevator has no more stops to serve, it remains idle at its last visited floor.
-  - 2 If no elevators are now found that can accept a passenger request, the request waits
-    until it is accepted by an elevator. The passenger will be notified at that time.
-  - 3 The system will look for the nearest elevator that is either idle, or moving in the correct direction.
-
-SET selectedElevator TO NULL 
-SET elevatorPosition TO NULL
-SET selectedFloor FROM the array OF buildingFloors (1 TO 10)
+- Battery: containing Columns
+- Column: containing Elevators
+- Elevators (Cages): moving up or moving down inside column depending on selected floor
+- callButtons: button on each floor outside requesting Elevators to direction up or down
+- Doors: elevator doors, open and close with movement of elevator
+- Floor request buttons: button inside selecting destination floor
+- FloorDisplay:
+- Elevator state: current floor and a list of next stops.
+  
+SET selectedElevator TO "IDLE[Stop]" 
+SET buildingFloors WITH array OF [1,2,3,4,5,6,7,8,9,10]
 SET callButton GET requestElevator to selectedFloor
+SET ElevatorState WITH floor and [Stop]
 
-SEQUENCE requestElevator WITH current floor, direction
-    CALL moveElevator USING current floor, direction
-    CALL doorOpenClose WITH current floor, direction 
-    CALL chooseFloorButton USING current floor, direction
+SEQUENCE ElevatorState WITH floor, position, direction
+    INIT ElevatorState WITH floor and list OF [Stop].
+    UNTIL requestElevator USING floor, direction
 END SEQUENCE
 
 SEQUENCE findBestElevator USING current floor, direction
-    IF selectedElevator IS NULL
-        CALL doorOpenClose WITH current floor, direction
-    ELSE 
-        CALL moveElevator TO current floor, direction
+    IF requestElevator THEN
+    move floor by floor at fixed speed, deleting next stop from their state when reaching that floor.
     ENDIF
 END SEQUENCE
 
-SEQUENCE moveElevator USING current floor, direction  
-    FOR EACH floor OF buildingFloors
-        IF requestElevator is < 10 THEN 
-           decrement WITH buildingFloors by 1 TO requestElevator floor, direction
-        ELSE requestElevator is > 1 THEN
-           increment TO buildingFloors by 1 TO requestElevator floor, direction
-        ENDIF
+SEQUENCE requestElevator USING current floor, direction
+    INIT requestButton;
+    CALL requestButton USING current floor, direction
 END SEQUENCE
 
-SEQUENCE elevatorArrived TO current floor, direction
-    CALL doorOpenClose USING selectedElevator floor, direction
+SEQUENCE requestButton USING current floor, direction  
+    SET moveElevator sends a request from floor "initial" to "destination".
+END SEQUENCE
+
+SEQUENCE moveElevator USING current floor, direction
+    IF requestElevator
+    CALL findBestElevator WITH floor, direction 
+    will look for a nearest elevator to floor "initial" that is moving in the correct direction from "initial" to "destination".
+    ELSE
+    move from "initial" to "destination"
+    ENDIF
+END SEQUENCE
+
+SEQUENCE chosenElevator USING current floor, direction
+    SET elevatorSystem will add floor "initial" to its list of next stops.
+END SEQUENCE
+
+SEQUENCE waitSystem USING current floor, direction
+    SET hasArrived will guide the passenger to wait for the chosen elevator, if found.
+END SEQUENCE 
+
+SEQUENCE modeStandby USING current floor, direction
+    CASE 
+    1. an elevator has no more stops to serve, it remains idle at its last visited floor.
+   
+    2. no elevators are now found that can accept a passenger request, the request waits until it is accepted by some elevator. The passenger will be notified at that time.
+    
+    3. will look for the nearest elevator that is either idle, or moving in the correct direction.
+    ENDCASE
+END SEQUENCE
+
+SEQUENCE hasArrived USING current floor, direction
+    SET doorOpen USING current floor, direction
+    The passenger request remains active until an elevator stops at floor "initial" to pick up the passenger; then the request is deleted.
 END SEQUENCE
 
 SEQUENCE doorOpenClose USING current floor, direction
-    CASE callbutton is pressed GET requestElevator TO selectedFloor
-        INIT doorOpen to open the door timer 10 second THEN doorClose 
-        INIT doorClose to close the door 
+    1 INIT doorOpen T open the door timer after 10 second 
+        THEN doorClose 
+    2 INIT doorClose TO close the door 
         
-             default sequence
-    ENDCASE 
-
+    3 wait CALL requestFloorButton
 END SEQUENCE
 
-SEQUENCE doorOpenClose USING current floor, direction
-    CASE callbutton is pressed GET requestElevator TO selectedFloor
-        INIT doorOpen to open the door timer 10 second THEN doorClose 
-        INIT doorClose to close the door 
-        
-             default sequence
-    ENDCASE 
-
-END SEQUENCE
-
-SEQUENCE pressButton USING current floor, direction
-   
-END SEQUENCE
-
-SEQUENCE pressButton USING current floor, direction
-   
-END SEQUENCE
-
-SEQUENCE pressButton USING current floor, direction
-   
+SEQUENCE requestFloorButton USING current floor, direction
+    SET destination USING current floor, direction
+    CALL moveElevator TO destination floor, direction
 END SEQUENCE
 
 
