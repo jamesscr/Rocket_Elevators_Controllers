@@ -65,9 +65,7 @@ END SEQUENCE
 
 SEQUENCE doorOpenClose USING current floor, direction
     1 INIT doorOpen T open the door timer after 10 second 
-        THEN doorClose 
     2 INIT doorClose TO close the door 
-        
     3 wait CALL requestFloorButton
 END SEQUENCE
 
