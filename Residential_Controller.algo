@@ -1,113 +1,100 @@
-_____________________________________"Residential"______________________________________
+'_____________________________________Residential______________________________________'
                   
-"column: Contains two elevators in a column"
-"elevator: moving up or moving down inside column depending on selected floor"
-"elevatorDoor: The door of the elevator"
-"elevatorState: position of elevator (moving, stoped, idle)"
-"requestButton: button on each floor outside requesting Elevators to direction up or down"
-"requestButtonFloor: button inside selecting destination floor"
-"closeDoorButton: The button that makes the door close sooner"
-"openDoorButton: The button that makes the door stay open"
-"direction: Where the elevator is going (up or down) from [1 TO 10]"
-"MoveElevator: Is the elevator in moving or idling"
+column: Contains two elevators in a column
+elevator: moving up or moving down inside column depending on selected floor
+elevatorDoor: The door of the elevator
+elevatorState: position of elevator (moving, stoped, idle)
+requestButton: button on each floor outside requesting Elevators to direction up or down
+requestButtonFloor: button inside selecting destination floor
+openDoorButton: The button that makes the door stay open
+direction: Where the elevator is going (up or down) from [1 TO 10]
+moveElevator: Is the elevator in moving or idling
 
-____________________________________"elevatorSystem"_____________________________________
 
-SEQUENCE elevatorState USING floor, direction
-    SET direction to up
-    SET direction to down
-    SET IDLE TO standby
-    FOR direction WITH at array[1 TO 10]
-        FOR elevatorState TO IDLE
-          IF elevatorState is NULL
-             standby
-          ELSE 
-             CALL requestElevator USING floor, direction
-          ENDIF   
-        END FOR
-    END FOR
-END SEQUENCE
-
+'Request elevator and caller for moving and opening doors'
 SEQUENCE requestElevator USING current floor, direction
-    GET requestButton PUSH floor at array[1 TO 10]
-        CASE requestElevator OF 
-            elevator is moving in the same direction :
-                        CALL hasArrived TO destination floor, direction
-            elevator is closer to destination :
-                        CALL moveElevator TO destination floor, from[array[1 TO 10]]
-            elevator is idle at the same floor :
-                        CALL addWaitlist WITH floor, direction
-        ENDCASE
+    SET findBestElevator = CALL findElevator WITH floor, direction
+    CALL moveElevator WITH findBestElevator 
+    CALL doorOpen WITH findBestElevator WITH current floor
 END SEQUENCE
 
-SEQUENCE IDLE USING current floor, direction
-    If requestElevator is TO NULL
-    CALL elevatorState TO floor, direction
-    ELSE moveElevator TO floor, direction
-    ENDIF
-END SEQUENCE
-
-SEQUENCE hasArrived USING current floor, direction
-    SET doorOpen USING current floor, direction
-    The passenger request remains active until an elevator stops at floor "initial" to pick up the passenger; then the request is deleted.
-    CALL moveElevator TO destination floor, direction
-END SEQUENCE
-
-SEQUENCE addWaitlist USING current floor, direction
-    GET addWaitlist will guide the passenger to wait for the requestElevator, 
-    if found then
-     CALL doorOpen with USING current floor, direction
+' close door then, choose destination with floor buttons and finally moves elevator'
+SEQUENCE destinationChoice With elavator, direction
+    CALL doorClose WITH elevator
+    FOR EACH elevator direction THEN
+        SET direction TO UP OR DOWN 
+    ENDFOR 
+    FOR  EACH floorButton is pressed
+         READ floorButton destination WITH elevator
+    ENDFOR
+    IF elevatorPosition is > destination THEN
+       direction TO down
     ELSE
-        CALL moveElevator USING current floor, direction
+       direction TO up
     ENDIF
+    CALL moveElevator WITH evalator, direction
 END SEQUENCE
 
+'open door on destination, open door when elevator has arrived after request, open door when designated button is pressed'
+SEQUENCE doorOpen WITH floor, direction
+    SET doorCloseButton is pressed FALSE
+    SET doorOpenButton is pressed FALSE
+    CASE elevator, position = destination or request
+       RETURN elevatorDoorOpen
+    CASE doorOpenButton is pressed TRUE
+       RETURN elevatorDoorOpen
+    CASE doorCloseButton is pressed TRUE
+       RETURN elevatorDoorClosed  
+    ENDCASE    
+END SEQUENCE
+
+'close door after timeout, if close door button is pressed bypass timeout door closes immediately, option to re-open door by pressing     open door button'
+SEQUENCE doorClose WITH floor, direction
+    SET timeout = 10s
+    WHILE elevatorDoor is OPENED WITH elevator UNOBSTRUCTED WITH elevator TIMEOUT(10s) WITH doorCloseButton is pressed TRUE
+        RETURN elevatorDoorClosed WITH elevator
+    ENDWHILE 
+    FOR doorOpenButton is pressed TRUE THEN
+        RETURN elevatorDoorOpen
+    ENDFOR    
+END SEQUENCE
+
+'find best elevator if an elevator is currently at same floor of calling, if the elevator is moving the same direction, if an elevator is available and nearer to caller also the option going to a waitlist if all elevators are un available until the elevator is available, also if a request for an elevator is made by someone, there is one moving in the same direction then the door open to pickup passenger'
+SEQUENCE findElevator USING current floor, direction
+    SET addWaitlist = wait next elevator = FALSE
+    SET bestElevator TO array[1 or 2]
+    SET elevatorList TO array OF [1 - 10]
+    SET IDLE TO [FALSE]
+    REPEAT 
+    SET unavailable TO moving opposite direction TO full TO maintenance = addWaitlist 
+    SET available TO is moving at same direction FROM elevatorList[] USING floor, direction
+    UNTIL bestElevator    
+    FOR EACH elevators OF caseList
+        CASE 1: requestElevator at current floor 1 OF bestElevator WITH position is equal elevatorList [1]
+             RETURN CALL doorOpen WITH floor
+        CASE 2: requestElevator at current floor elevatorList OF bestElevator OF elevatorList WITH position IDLE[TRUE]
+             RETURN CALL moveElevator TO floor, direction
+        CASE 3: requestElevator at current Floor OF elevatorList OF addWaitlist WITH unavailable
+             RETURN addWaitlist TRUE
+        CASE 4: requestElevator at Floor OF elevatorList OF available USING floor, direction   
+        ENDCASE
+    ENDFOR         
+END SEQUENCE
+
+'movement of the elevator when a request is made'
 SEQUENCE moveElevator USING current floor, direction
-    CASE in parallel
-        elevators move step by step to their next stops with a specified `duration` time stepping
-        take the closest elevator for every request
-        
-        add the next stops to the selected elevator and update the elevator state
-        every incoming request
-    ENDCASE
-END SEQUENCE
-
-SEQUENCE requestButton USING current floor, direction
-    CALL buildingFloors USING current floor, direction
-    SET IDLE =  "initial" TO "destination" WITH requestButton
-    SET moveElevator sends a request from floor "initial" to "destination".
-    CALL  moveElevator WITH floor, direction
-END SEQUENCE
-
-SEQUENCE chosenElevator USING current floor, direction
-    SET elevatorSystem will add floor "initial" to its list of next stops.
+    IF requestButton TRUE > elevator currentFloor 
+      RETURN move elevator DECREMENT BY 1 to destination floor
+    ELSE requestButton TRUE < elevator currentFloor 
+      RETURN move elevator INCREMENT BY 1 to destination floor
+    ENDIF  
 END SEQUENCE 
 
-SEQUENCE modeStandby USING current floor, direction
-    CASE 
-    1. an elevator has no more stops to serve, it remains idle at its last visited floor.
-   
-    2. no elevators are now found that can accept a passenger request, the request waits until it is accepted by some elevator. The passenger will be notified at that time.
-    
-    3. will look for the nearest elevator that is either idle, or moving in the correct direction.
-    ENDCASE
-END SEQUENCE
 
-SEQUENCE doorOpen WITH floor
-    SET doorOpen to open
-    WHILE SLEEP 10 seconds
-        door is_Blocked NOT EQUAL false
-    ENDWHILE 
-    CALL doorClose USING elevator
-END SEQUENCE
 
-SEQUENCE doorClose WITH floor
-    SET doorClose to close 
-END SEQUENCE
 
-SEQUENCE requestFloorButton USING current floor, direction
-    CALL moveElevator TO destination floor, direction
-END SEQUENCE
+
+
 
 
 
