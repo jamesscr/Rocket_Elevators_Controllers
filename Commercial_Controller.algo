@@ -1,4 +1,4 @@
-'_____________________________________Cmmercial______________________________________'
+'_____________________________________Commercial______________________________________'
 battery: containing coloums                  
 column: Contains two elevators
 elevator: moving up or moving down inside column depending on selected floor
@@ -15,23 +15,25 @@ SET waitList TO array NULL
 SET elevatorList TO array numberOfElevators 
 
 SET Column1 TO numberFloors1
-SET numberFloors1 TO array OF numberOfFloors floors, RCl    
+SET numberFloors1 TO array OF numberOfFloors floors
 
 SET Column2 TO numberFloors2
-SET numberFloors2 TO array OF numberOfFloors floors, RCl    
+SET numberFloors2 TO array OF numberOfFloors floors  
 
 SET Column3 TO numberFloors3
-SET numberFloors3 TO array OF numberOfFloors floors, RCl     
+SET numberFloors3 TO array OF numberOfFloors floors    
 
 SET Column4 TO numberFloors4
-SET numberFloors4 TO array OF numberOfFloors floors, RCl      
-
+SET numberFloors4 TO array OF numberOfFloors floors
+      
+'elevator state calling for button, Battery and elevator operations'
 SEQUENCE elevatorState WITH floor, direction
     CALL requestedFloorButton USING floor, direction
     CALL battery USING floor, direction
     CALL operateElevator USING selectedElevator
 END SEQUENCE
 
+'request floor button is pressed, then showing light on or off when waiting'
 SEQUENCE requestedFloorButton WITH floor, direction
     IF requestedFloorButton is pressed THEN
         PUSH floor AND direction to waitList
@@ -40,23 +42,21 @@ SEQUENCE requestedFloorButton WITH floor, direction
         SET floorLightBtn TO OFF
 END SEQUENCE
 
+'repart all selection for all 66 elevaotrs '
 SEQUENCE selectColumn WITH floor, direction RETURNING selectedColumn
     IF floorRequest FROM B6 TO B1 THAN RC THEN
-        RETURN Column1 TO selectedColumn
-
+        RETURN Column1 TO selectedColumn WITH elevators
     ELSE IF floorRequest FROM 1 = 20 
-        RETURN Column2 TO selectedColumn
-
+        RETURN Column2 TO selectedColumn WITH elevators
     ELSE IF floorRequest FROM 21 = 40 
-        RETURN Column3 TO selectedColumn
-
+        RETURN Column3 TO selectedColumn WITH elevators
     ELSE IF floorRequest FROM 41 = 60 AND 
-        RETURN Column4 TO selectedColumn
+        RETURN Column4 TO selectedColumn WITH elevators
     END IF
 END SEQUENCE
 
+'input checking the system of elevators if it's safe, sorting from a wait list for calling either up or down'
 SEQUENCE operateElevator WITH selectedElevator
-    
     READ systemStatus WIth elevator
     IF systemStatus EQUAL safe THEN
         GET floor FROM sorted_waitList
@@ -83,6 +83,7 @@ SEQUENCE operateElevator WITH selectedElevator
     END IF
 END SEQUENCE
 
+'whwn setting to idle '
 SEQUENCE Idle WITH selectedElevator
     SET currentElevatorState TO idle
     SET ElevatorList TO array of numberOfElevators Elevator
@@ -90,10 +91,11 @@ SEQUENCE Idle WITH selectedElevator
         IF currentElevatorState EQUAL idle
             REPEAT  
                 goDown
-            UNTIL currentElevatorFloor EQUAL lobbyLevel
+            UNTIL currentElevatorFloor EQUAL RC1
     END FOR
 END SEQUENCE
 
+'the math  to sort the best elevator, depending on the position of the elevator, nearer'
 SEQUENCE indexDifference WITH ElevatorList
     FOR EACH Elevator IN ElevatorList
         SET indexDifference TO array OF ABSOLUTE requestedFloor MINUS currentElevatorFloor
@@ -106,7 +108,7 @@ END SEQUENCE
 
 SEQUENCE waitList RETURNING sorted_waitList
     GET requestedFloors FROM waitList
-    SORT waitList WITH elevatorSortingAlgorithm
+    SORT waitList WITH indexDifference
     SET waitList TO sorted_list
     RETURN sorted_waitList
 END SEQUENCE
@@ -117,6 +119,7 @@ SEQUENCE hasArrived WITH selectedElevator
     CALL operateDoors USING selectedlElevator
 END SEQUENCE
 
+'setting the doors to open or close'
 SEQUENCE operateDoors WITH selectedElevator
     SET checkSystem USING selectedElevator
         WHILE selectedElevator safe NOT EQUAL TRUE
@@ -131,20 +134,23 @@ SEQUENCE operateDoors WITH selectedElevator
         END IF
 END SEQUENCE
 
+'elevator go down depending on user input'
 SEQUENCE goDown WITH selectedElevator
     FOR EACH numberOfFloor IN floors 
-        WHILE numberOfFloor index GREATER THAN requestedFloor index
-            DECREASE numberOfFloor by 1
+        WHILE numberOfFloor index > THAN requestedFloor index
+            DECREMENT numberOfFloor by 1 step by step
     END FOR
 END SEQUENCE
 
+'elevator go up depending on user input'
 SEQUENCE goUp WITH selectedElevator
     FOR EACH numberOfFloor IN floors 
-        WHILE numberOfFloor index LESSER THAN requestedFloor index
-            INCREMENT numberOfFloor by 1
+        WHILE numberOfFloor index < THAN requestedFloor index
+            INCREMENT numberOfFloor by 1 step by step
     END FOR
 END SEQUENCE
 
+'check if system is obtructed or not, overweight, until safe'
 SEQUENCE checkSystem WITH selectedElevator
     CALL weightMax
     CALL obstructed
