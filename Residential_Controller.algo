@@ -52,7 +52,7 @@ END SEQUENCE
 SEQUENCE doorClose WITH floor, direction
     SET timeout = 10s
     WHILE elevatorDoor is OPENED WITH elevator UNOBSTRUCTED WITH elevator TIMEOUT(10s) WITH doorCloseButton is pressed TRUE
-        RETURN elevatorDoorClosed WITH elevator
+        RETURN elevatorDoorClosed 
     ENDWHILE 
     FOR doorOpenButton is pressed TRUE THEN
         RETURN elevatorDoorOpen

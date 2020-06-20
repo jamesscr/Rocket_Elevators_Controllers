@@ -1,84 +1,170 @@
-Objects that need to be controlled:
-- Battery: containing Columns
-- Column: containing Elevators
-- Elevators (Cages): moving up or moving down inside column depending on selected floor
-- callButtons: button on each floor outside requesting Elevators to direction up or down
-- Doors: elevator doors, open and close with movement of elevator
-- Floor request buttons: button inside selecting destination floor
-- FloorDisplay:
-- Elevator state: current floor and a list of next stops.
-  
-SET selectedElevator TO "IDLE[Stop]" 
-SET buildingFloors WITH array OF [1,2,3,4,5,6,7,8,9,10]
-SET callButton GET requestElevator to selectedFloor
-SET ElevatorState WITH floor and [Stop]
+'_____________________________________Cmmercial______________________________________'
+battery: containing coloums                  
+column: Contains two elevators
+elevator: moving up or moving down inside column depending on selected floor
+elevatorDoor: The door of the elevator
+elevatorState: position of elevator (moving, stoped, idle)
+callButton: button direction up or down to request elevator
+openDoorButton: The button that force door to stay open
+closeDoorButton: The button that force door to stay close 
+controlPanel: unit of system displaying Floor
 
-SEQUENCE ElevatorState WITH floor, position, direction
-    INIT ElevatorState WITH floor and list OF [Stop].
-    UNTIL requestElevator USING floor, direction
+SET RC to 1
+SET selectedElevator TO NULL
+SET waitList TO array NULL
+SET elevatorList TO array numberOfElevators 
+
+SET Column1 TO numberFloors1
+SET numberFloors1 TO array OF numberOfFloors floors, RCl    
+
+SET Column2 TO numberFloors2
+SET numberFloors2 TO array OF numberOfFloors floors, RCl    
+
+SET Column3 TO numberFloors3
+SET numberFloors3 TO array OF numberOfFloors floors, RCl     
+
+SET Column4 TO numberFloors4
+SET numberFloors4 TO array OF numberOfFloors floors, RCl      
+
+SEQUENCE elevatorState WITH floor, direction
+    CALL requestedFloorButton USING floor, direction
+    CALL battery USING floor, direction
+    CALL operateElevator USING selectedElevator
 END SEQUENCE
 
-SEQUENCE findBestElevator USING current floor, direction
-    IF requestElevator THEN
-    move floor by floor at fixed speed, deleting next stop from their state when reaching that floor.
-    ENDIF
-END SEQUENCE
-
-SEQUENCE requestElevator USING current floor, direction
-    INIT requestButton;
-    CALL requestButton USING current floor, direction
-END SEQUENCE
-
-SEQUENCE requestButton USING current floor, direction  
-    SET moveElevator sends a request from floor "initial" to "destination".
-END SEQUENCE
-
-SEQUENCE moveElevator USING current floor, direction
-    IF requestElevator
-    CALL findBestElevator WITH floor, direction 
-    will look for a nearest elevator to floor "initial" that is moving in the correct direction from "initial" to "destination".
+SEQUENCE requestedFloorButton WITH floor, direction
+    IF requestedFloorButton is pressed THEN
+        PUSH floor AND direction to waitList
+        SET floorLightBtn TO ON
     ELSE
-    move from "initial" to "destination"
-    ENDIF
+        SET floorLightBtn TO OFF
 END SEQUENCE
 
-SEQUENCE chosenElevator USING current floor, direction
-    SET elevatorSystem will add floor "initial" to its list of next stops.
+SEQUENCE selectColumn WITH floor, direction RETURNING selectedColumn
+    IF floorRequest FROM B6 TO B1 THAN RC THEN
+        RETURN Column1 TO selectedColumn
+
+    ELSE IF floorRequest FROM 1 = 20 
+        RETURN Column2 TO selectedColumn
+
+    ELSE IF floorRequest FROM 21 = 40 
+        RETURN Column3 TO selectedColumn
+
+    ELSE IF floorRequest FROM 41 = 60 AND 
+        RETURN Column4 TO selectedColumn
+    END IF
 END SEQUENCE
 
-SEQUENCE waitSystem USING current floor, direction
-    SET hasArrived will guide the passenger to wait for the chosen elevator, if found.
-END SEQUENCE 
-
-SEQUENCE modeStandby USING current floor, direction
-    CASE 
-    1. an elevator has no more stops to serve, it remains idle at its last visited floor.
-   
-    2. no elevators are now found that can accept a passenger request, the request waits until it is accepted by some elevator. The passenger will be notified at that time.
+SEQUENCE operateElevator WITH selectedElevator
     
-    3. will look for the nearest elevator that is either idle, or moving in the correct direction.
-    ENDCASE
+    READ systemStatus WIth elevator
+    IF systemStatus EQUAL safe THEN
+        GET floor FROM sorted_waitList
+        IF sorted_waitList NOT EQUAL NULL THEN
+            IF requestedFloor EQUAL currentElevatorFloor THEN
+                CALL hasArrived USING selectedElevator
+                POP requestedFloor FROM sorted_waitList
+            ELSE IF requestedFloor GREATER THAN currentElevatorFloor THEN
+                REPEAT
+                    CALL goUp USING selectedElevator
+                UNTIL currentElevatorFloor EQUAL requestedFloor
+                CALL hasArrived USING selectedElevator
+                POP requestedFloor FROM sorted_waitList
+            ELSE IF requestedFloor LESSER THAN currentElevatorFloor THEN
+                REPEAT
+                    CALL goDown USING selectedElevator
+                UNTIL currentElevatorFloor EQUAL requestedFloor
+                CALL hasArrived USING selectedElevator
+                POP requestedFloor FROM sorted_waitList
+            END IF
+        ELSE
+            CALL Idle USING selectedElevator
+        END IF
+    END IF
 END SEQUENCE
 
-SEQUENCE hasArrived USING current floor, direction
-    SET doorOpen USING current floor, direction
-    The passenger request remains active until an elevator stops at floor "initial" to pick up the passenger; then the request is deleted.
+SEQUENCE Idle WITH selectedElevator
+    SET currentElevatorState TO idle
+    SET ElevatorList TO array of numberOfElevators Elevator
+    FOR EACH Elevator IN ElevatorList
+        IF currentElevatorState EQUAL idle
+            REPEAT  
+                goDown
+            UNTIL currentElevatorFloor EQUAL lobbyLevel
+    END FOR
 END SEQUENCE
 
-SEQUENCE doorOpenClose USING current floor, direction
-    1 INIT doorOpen T open the door timer after 10 second 
-        THEN doorClose 
-    2 INIT doorClose TO close the door 
-        
-    3 wait CALL requestFloorButton
+SEQUENCE indexDifference WITH ElevatorList
+    FOR EACH Elevator IN ElevatorList
+        SET indexDifference TO array OF ABSOLUTE requestedFloor MINUS currentElevatorFloor
+    END FOR
+    IF indexDifference EQUAL lowestIndex
+        SET Elevator TO BestElevator 
+    END IF
+    RETURN BestElevator
 END SEQUENCE
 
-SEQUENCE requestFloorButton USING current floor, direction
-    SET destination USING current floor, direction
-    CALL moveElevator TO destination floor, direction
+SEQUENCE waitList RETURNING sorted_waitList
+    GET requestedFloors FROM waitList
+    SORT waitList WITH elevatorSortingAlgorithm
+    SET waitList TO sorted_list
+    RETURN sorted_waitList
 END SEQUENCE
 
+SEQUENCE hasArrived WITH selectedElevator
+    SET floorLightBtn TO Off
+    SET directionLight TO On
+    CALL operateDoors USING selectedlElevator
+END SEQUENCE
 
+SEQUENCE operateDoors WITH selectedElevator
+    SET checkSystem USING selectedElevator
+        WHILE selectedElevator safe NOT EQUAL TRUE
+        REPEAT
+            INCREMENT timer by 2
+        UNTIL selectedElevator safe EQUAL TRUE
 
+        IF timer GREATER than 0        
+            SET doorsElevator TO OPEN
+        ELSE 
+            SET doorsElevator TO CLOSED         
+        END IF
+END SEQUENCE
 
+SEQUENCE goDown WITH selectedElevator
+    FOR EACH numberOfFloor IN floors 
+        WHILE numberOfFloor index GREATER THAN requestedFloor index
+            DECREASE numberOfFloor by 1
+    END FOR
+END SEQUENCE
 
+SEQUENCE goUp WITH selectedElevator
+    FOR EACH numberOfFloor IN floors 
+        WHILE numberOfFloor index LESSER THAN requestedFloor index
+            INCREMENT numberOfFloor by 1
+    END FOR
+END SEQUENCE
+
+SEQUENCE checkSystem WITH selectedElevator
+    CALL weightMax
+    CALL obstructed
+
+    IF weightMax EQUAL FALSE AND obstructed EQUAL FALSE THEN
+        SET safe TO TRUE
+    ELSE
+        SET safe TO FALSE
+        REPEAT 
+            CALL checkSystem USING selectedElevator
+        UNTIL safe EQUAL TRUE
+        RETURN safe
+    END IF
+END SEQUENCE
+
+SEQUENCE weightMax WITH selectedElevator
+   SET weightMax TO 2560 lbs
+    READ Weight FROM Elevator
+    IF weight GREATER THAN weightMax THEN
+        RETURN TRUE
+    ELSE RETURN FALSE
+    END IF
+END SEQUENCE
