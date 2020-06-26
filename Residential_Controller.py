@@ -6,6 +6,7 @@ class Column():
         self.externalButtonsList = []
         self.elevatorsList = []
         
+
                 
     #method findElevator with parameters self, requestedFloor and direction
 #     def findElevator(self, requestedFloor, direction):
