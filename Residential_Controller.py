@@ -46,11 +46,10 @@ class Column():
         elevator.addToQueue(requestedFloor)
         elevator.closeDoors()
         elevator.move()
-        
-        
+
         class Elevator():
             def __init__(self, currentFloor, floors):
-                self.direction =  None
+                self.direction = None
                 self.floors = floors
                 self.currentFloor = currentFloor
                 self.status = "idle"
@@ -62,16 +61,16 @@ class Column():
 
             def addToQueue(self, requestedFloor):
                 self.queue.append(requestedFloor)
-                
+
                 if self.direction == "up":
-                   self.queue.sort(reverse=True)
+                    self.queue.sort(reverse=True)
                 if self.direction == "down":
-                   self.queue.sort(reverse=True)
-                   
+                    self.queue.sort(reverse=True)
+
             def move(self):
-                #while len function to returns the number 
-                while len (self.queue) > 0:
-                    
+                # while len function to returns the number
+                while len(self.queue) > 0:
+
                     operate = self.queue[0]
 
             if self.door == "open":
@@ -88,31 +87,48 @@ class Column():
                 self.status = "moving"
                 self.direction = "down"
                 self.moveDown()
-                
+
                 self.closeDoors()
-                
+
                 self.status = "idle"
-                
-               
 
             def moveUp(self):
+                self.currentFloor += 1
 
             def moveDown(self):
+                self.currentFloor -= 1
 
             def openDoors(self):
+                self.door = "open"
 
             def closeDoors(self):
+                self.door = "closed"
 
         class ExtButton():
+            def __init__(self, requestFloor, direction):
+                self.requestFloor = requestFloor
+                self.direction = direction
 
         class IntButton():
+            def __init__(self, floor):
+                self.floor = floor
 
-        # testing
+            # testing
 
-        # def test1_requestElevator():
+            # def test1_requestElevator():
+                column1 = Column(10, 2)
+                column1.elevatorsList[0].currentFloor = 1
+                column1.elevatorsList[0].direction  =  "up"
+                column1.elevatorsList[0].status =  "moving"
+                column1.elevatorsList[0].queue = [3,5]
+                column1.elevatorsList[1].currentFloor = 6
+                column1.elevatorsList[1].direction  =  "down"
+                column1.elevatorsList[1].status =  "moving"
+                column1.elevatorsList[1].queue = [6,2]
+                column1.requestElevator(7, "up")
 
-        # Test1_requestElevator()
+            # Test1_requestElevator()
 
-        # def test2_requestFloor():
+            # def test2_requestFloor():
 
-        # Test2_requestFloor()
+            # Test2_requestFloor()
