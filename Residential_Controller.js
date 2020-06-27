@@ -165,17 +165,29 @@ console.log("\nTest\n")
 
 function test1_requestElevator() {
 	column = new Column(10, 2);
-	column.arrayElevators[0].currentFloor = 2
-	column.arrayElevators[0].direction = "up"
-	column.arrayElevators[0].status = "moving"
-	column.arrayElevators[0].queue = [4, 6, 7]
-	column.arrayElevators[1].currentFloor = 6
-	column.arrayElevators[1].direction = "down"
-	column.arrayElevators[1].status = "moving"
-	column.arrayElevators[1].queue = [4, 3]
+	column.arrayElevators[1].currentFloor = 2
+	column.arrayElevators[1].direction = null
+	column.arrayElevators[1].status = "idle"
+	column.arrayElevators[1].queue = []
+	column.arrayElevators[0].currentFloor = 6
+	column.arrayElevators[0].direction = null
+	column.arrayElevators[0].status = "idle"
+	column.arrayElevators[0].queue = []
 	
 	//Calling the function to request an elevator
-	column.requestElevator(1, "down");
+	column.requestElevator(7, "up");
 }
 test1_requestElevator();
+// //test 2
+ 
+// function test2_requestFloor() {
+// 	column2 = new Column(10, 2);
+// 	column2.arrayElevators[1].currentFloor = 3
+// 	column2.arrayElevators[1].direction = "up"
+// 	column2.arrayElevators[1].status = "moving"
+// 	column2.arrayElevators[1].queue = [3]
+	
+// 	column2.requestFloor(7)
+// }
 
+// test2_requestFloor()
