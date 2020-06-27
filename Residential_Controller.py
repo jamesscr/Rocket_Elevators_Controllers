@@ -81,7 +81,7 @@ class Elevator():
             operate = self.queue[0]
 
             if self.door == "open":
-                print("Waiting 7 seconds for the doorway to be cleared")
+                print("within 5 seconds if passage is not obstructed")
                 self.closeDoors()
             if operate == self.currentFloor:
                 del self.queue[0]
