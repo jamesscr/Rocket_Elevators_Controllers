@@ -1,11 +1,11 @@
 //The  Column function contructor has three methods from my column are :- findElevator, requestElevator and requestFloor
-//
 class Column {
 	constructor(floors, elevators) {
 		this.floors = floors;
 		this.elevators = elevators;
 		this.arrayExtButton = [];
 		this.arrayElevators = [];
+		console.log("This building has " + elevators + " elevators driving passengers on " + floors + " floors");
 		for (let i = 0; i < elevators; i++) {
 			this.arrayElevators.push(new Elevator(0, floors));
 		}
@@ -18,7 +18,7 @@ class Column {
 			}
 		}
 	}
-
+    
 	findElevator(requestedFloor, direction) {
 		let selectedElevator = null;
 		let bestDiff = this.floors;
@@ -40,20 +40,24 @@ class Column {
 				}
 			}
 		}
+		console.log("System has find the best elevator on floor " + selectedElevator.currentFloor);
 		return selectedElevator;
 	}
 
 	requestElevator(requestedFloor, direction) {
 		if (requestedFloor > this.floors) return console.log("Floor " + requestedFloor + " doesn't exist!");
+		console.log("Call for an elevator to the floor " + requestedFloor);
 
 		let elevator = this.findElevator(requestedFloor, direction);
 
 		elevator.addToQueue(requestedFloor);
 		elevator.move();
+		//console.log(elevator);
 		return elevator;
 	}
 	
 	requestFloor(elevator, requestedFloor) {
+		console.log("Moving elevator on floor " + elevator.currentFloor + " to the floor " + requestedFloor);
 		elevator.addToQueue(requestedFloor);
 		elevator.closeDoors();
 		elevator.move();
@@ -87,14 +91,17 @@ class Elevator {
 			this.queue.sort((a, b) => b - a)
 		}
 		//console.log(this.queue.join(", "));
+		console.log("This building has " + requestedFloor + " elevators driving passengers on  " + this.queue.join(", "));
 	}
 	
 	move() {
+		//console.log("Move elevator");
 		while (this.queue.length > 0) {
 
 			let operate = this.queue[0];
 
 			if (this.door === "open") {
+				console.log("Within 5 seconds the door closes if passage is not obstructed");
 				this.closeDoors();
 			}
 			if (operate === this.currentFloor) {
@@ -112,24 +119,30 @@ class Elevator {
 				this.moveDown()
 			}
 		}
+		console.log("Within 5 seconds door the closes if passage is not obstructed");
 		this.closeDoors();
+		console.log("Elevator is now idle on floor " + this.currentFloor);
 		this.status = "is idle";
 	}
 	
 	moveUp() {
 		this.currentFloor++;
+		console.log("Moving up Elevator on floor " + this.currentFloor);
 	}
 
 	moveDown() {
 		this.currentFloor--;
+		console.log("Moving down Elevator on floor " + this.currentFloor);
 	}
 
 	openDoors() {
 		this.door = "open"
+		console.log("Open door on floor " + this.currentFloor);
 	}
 
 	closeDoors() {
 		this.door = "closed"
+		console.log("Close door on floor " + this.currentFloor);
 	}
 
 }
@@ -149,6 +162,8 @@ class InButton {
 
 // Test
 
+console.log("\nTest\n")
+
 function test1_requestElevator() {
 	column = new Column(10, 2);
 	column.arrayElevators[0].currentFloor = 2
@@ -163,11 +178,3 @@ function test1_requestElevator() {
 }
 test1_requestElevator();
 
-
-
-// function test2_requestElevator() {
-
-	//code
-// }
-
-// test2_requestElevator();
