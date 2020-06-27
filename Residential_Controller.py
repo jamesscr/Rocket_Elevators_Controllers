@@ -71,7 +71,7 @@ class Elevator():
         if self.direction == "down":
             self.queue.sort(reverse=True)
 
-        print("This building has " + str(requestedFloor) + " elevators driving passengers on " + ', '.join(str(x) for x in self.queue))
+        print("Added floor " + str(requestedFloor) + " elevators driving passengers on " + ', '.join(str(x) for x in self.queue))
 
     def move(self):
         print ("Moving elevator")
@@ -130,14 +130,16 @@ class IntButton():
 
 def test_requestElevator():
                 column1 = Column(10, 2)
-                column1.arrayelevators[0].currentFloor = 1
+                column1.arrayelevators[0].currentFloor = 6
                 column1.arrayelevators[0].direction  =  "up"
-                column1.arrayelevators[0].status =  "moving"
-                column1.arrayelevators[0].queue = [4, 6, 7]
-                column1.arrayelevators[1].currentFloor = 6
-                column1.arrayelevators[1].direction  =  "down"
+                column1.arrayelevators[0].status =  "idle"
+                column1.arrayelevators[0].queue = [1, 5, 8]
+                column1.arrayelevators[1].currentFloor = 3
+                column1.arrayelevators[1].direction  =  "up"
                 column1.arrayelevators[1].status =  "moving"
-                column1.arrayelevators[1].queue = [4, 3]
-                column1.requestElevator(1, "down")
+                column1.arrayelevators[1].queue = [2, 1]
+                
+                column1.requestElevator(4, "down")
+                column1.requestElevator(9, "down")
 
 test_requestElevator()

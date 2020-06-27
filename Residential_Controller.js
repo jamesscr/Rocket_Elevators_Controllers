@@ -174,6 +174,8 @@ function test1_requestElevator() {
 	column.arrayElevators[1].direction = "down"
 	column.arrayElevators[1].status = "moving"
 	column.arrayElevators[1].queue = [4, 3]
+	
+	//Calling the function to request an elevator
 	column.requestElevator(1, "down");
 }
 test1_requestElevator();
