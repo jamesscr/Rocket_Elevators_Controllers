@@ -140,6 +140,5 @@ def test_requestElevator():
                 column1.arrayelevators[1].queue = [2, 1]
                 
                 column1.requestElevator(4, "down")
-                column1.requestElevator(9, "down")
 
 test_requestElevator()
