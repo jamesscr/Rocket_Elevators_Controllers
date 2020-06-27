@@ -5,7 +5,6 @@ class Column {
 		this.elevators = elevators;
 		this.arrayExtButton = [];
 		this.arrayElevators = [];
-		console.log("This building has " + elevators + " elevators driving passengers on " + floors + " floors");
 		for (let i = 0; i < elevators; i++) {
 			this.arrayElevators.push(new Elevator(0, floors));
 		}
@@ -91,7 +90,7 @@ class Elevator {
 			this.queue.sort((a, b) => b - a)
 		}
 		//console.log(this.queue.join(", "));
-		console.log("This building has " + requestedFloor + " elevators driving passengers on  " + this.queue.join(", "));
+		console.log("Added floor " + requestedFloor + " to the elevator's queue which is now:  " + this.queue.join(", "));
 	}
 	
 	move() {

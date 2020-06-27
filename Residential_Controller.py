@@ -71,7 +71,7 @@ class Elevator():
         if self.direction == "down":
             self.queue.sort(reverse=True)
 
-        print("Added floor " + str(requestedFloor) + " elevators driving passengers on " + ', '.join(str(x) for x in self.queue))
+        print("Added floor " + str(requestedFloor) + " to the elevator's queue which is now: " + ', '.join(str(x) for x in self.queue))
 
     def move(self):
         print ("Moving elevator")
