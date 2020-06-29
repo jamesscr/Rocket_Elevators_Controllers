@@ -2,7 +2,8 @@ package main
 
 import "fmt"
 
-//Constructures
+//Construction of Battery, Columns and Elevators
+
 // for battery
 type battery struct{
 	columns  []column
@@ -30,7 +31,7 @@ type elevator struct{
 
 
 
-// main function
+// main function in which test is performed
 func main()  {
 	fmt.Println("test")
 }
