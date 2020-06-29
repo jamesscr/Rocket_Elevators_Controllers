@@ -2,16 +2,15 @@ package main
 
 import "fmt"
 
-//Construction of Battery, Columns and Elevators
-
-// for battery
+// Construction of Battery, Columns and Elevators
+// for battery \\
 type battery struct{
 	columns  []column
 	columnsNumber int
 	totalFloors int
 }
 
-// for columns
+// for columns \\
 type column struct{
 	elevatorsQuant []elevator
 	elevatorNumber int
@@ -21,7 +20,7 @@ type column struct{
 	columnID string
 }
 
-// for elevator
+// for elevator \\
 type elevator struct{
 	elevatorID string
 	currentFloor int
@@ -29,9 +28,7 @@ type elevator struct{
 	quant int
 }
 
-
-
-// main function in which test is performed
+// main function in which test is performed \\
 func main()  {
 	fmt.Println("test")
 }
