@@ -122,7 +122,7 @@ func (b *Battery) FindBestColumn(RequestedFloor int) Column {
 	} else if RequestedFloor > 47 && RequestedFloor <= 66 || RequestedFloor == 7 { //RC(7) + 41=>60=47=>60
 		return b.columnList[3]
 	}
-	return b.columnList[0] //need to change 3 for ""
+	return b.columnList[3] //need to change 3 for ""
 }
 
 // FindBestElevator with RequestFloor, Direction
