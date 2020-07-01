@@ -198,29 +198,29 @@ func (e *Elevator) CloseDoor() {
 
 // MoveUp Elevator
 func (e *Elevator) MoveUp(RequestedFloor int) {
-	fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Current Floor :", e.currentFloor)
+	fmt.Println("Column : ", + e.Column.ColumnNumber, " Elevator : #", + e.elevatorNumber, " Current Floor :", + e.currentFloor)
 	for RequestedFloor > e.currentFloor {
 		e.currentFloor ++
 		if RequestedFloor == e.currentFloor {
 			time.Sleep(1 * time.Second)
-			fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Reach the destination floor : ", e.currentFloor)
+			fmt.Println("Column : ", + e.Column.ColumnNumber, " Elevator : #", + e.elevatorNumber, " Reach the destination floor : ", + e.currentFloor)
 		}
 		time.Sleep(500 * time.Millisecond)
-		fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Floor : ", e.currentFloor)
+		fmt.Println("Column : ", + e.Column.ColumnNumber, " Elevator : #", + e.elevatorNumber, " Floor : ", + e.currentFloor)
 	}
 }
 
 // MoveDown Elevator
 func (e *Elevator) MoveDown(RequestedFloor int) { 
-	fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Current Floor :", e.currentFloor)
+	fmt.Println("Column : ", + e.Column.ColumnNumber, " Elevator : #", + e.elevatorNumber, " Current Floor :", + e.currentFloor)
 	for RequestedFloor < e.currentFloor {
 		e.currentFloor --
 		if RequestedFloor == e.currentFloor {
 			time.Sleep(1 * time.Second)
-			fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Reach the destination floor : ", e.currentFloor)
+			fmt.Println("Column : ", + e.Column.ColumnNumber, " Elevator : #", + e.elevatorNumber, " Reach the destination floor : ", + e.currentFloor)
 		}
 		time.Sleep(500 * time.Millisecond)
-		fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Floor : ", e.currentFloor)
+		fmt.Println("Column : ", + e.Column.ColumnNumber, " Elevator : #", + e.elevatorNumber, " Floor : ", + e.currentFloor)
 	}
 }
 
@@ -279,6 +279,26 @@ func main()  {
 	controller.arraybattery[0].columnList[3].ElevatorList[0].state = "moving"
 	controller.arraybattery[0].columnList[3].ElevatorList[0].Direction = "down"
 	controller.arraybattery[0].columnList[3].ElevatorList[0].SendRequest(7)
+	
+	// controller.arraybattery[0].columnList[3].ElevatorList[1].currentFloor = 56
+	// controller.arraybattery[0].columnList[3].ElevatorList[1].state = "moving"
+	// controller.arraybattery[0].columnList[3].ElevatorList[1].Direction = "down"
+	// controller.arraybattery[0].columnList[3].ElevatorList[1].SendRequest(66)
+	
+	// controller.arraybattery[0].columnList[3].ElevatorList[2].currentFloor = 52
+	// controller.arraybattery[0].columnList[3].ElevatorList[2].state = "moving"
+	// controller.arraybattery[0].columnList[3].ElevatorList[2].Direction = "down"
+	// controller.arraybattery[0].columnList[3].ElevatorList[2].SendRequest(64)
+
+	// controller.arraybattery[0].columnList[3].ElevatorList[3].currentFloor = 7
+	// controller.arraybattery[0].columnList[3].ElevatorList[3].state = "moving"
+	// controller.arraybattery[0].columnList[3].ElevatorList[3].Direction = "down"
+	// controller.arraybattery[0].columnList[3].ElevatorList[3].SendRequest(60)
+
+	// controller.arraybattery[0].columnList[3].ElevatorList[4].currentFloor = 66
+	// controller.arraybattery[0].columnList[3].ElevatorList[4].state = "moving"
+	// controller.arraybattery[0].columnList[3].ElevatorList[4].Direction = "down"
+	// controller.arraybattery[0].columnList[3].ElevatorList[4].SendRequest(7)
  
     //controller.AssignElevator(60)
     controller.RequestElevator(60, 7)
