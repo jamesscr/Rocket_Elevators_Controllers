@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Construction of Battery, Columns and Elevators
+// AppController Construct
 type AppController struct {
 	BatteryNum int
 	arraybattery     []Battery
@@ -15,20 +15,20 @@ type AppController struct {
 }
 
 
-// for battery \\
+// Battery Construct
 type Battery struct {
 	columnNumber   int
 	columnList []Column
 }
 
-// for columns \\
+// Column Construct
 type Column struct {
 	ColumnNumber  int
 	elvPerColumn int
 	ElevatorList  []Elevator
 }
 
-// for elevator \\
+// Elevator Construct
 type Elevator struct {
 	elevatorNumber         int
 	currentFloor      int
@@ -39,7 +39,7 @@ type Elevator struct {
 	Column            Column
 }
 
-// New Controller, Create Battery
+// NewController from Battery
 func NewController(BatteryNum int) AppController {
 	controller := new(AppController)
 	controller.BatteryNum = 1
@@ -85,7 +85,7 @@ func NewElevator() *Elevator {
 	}
 
 
-// from userInput for RequestElevator
+// RequestElevator from userInput
 func (controller *AppController) RequestElevator(FloorNumber, RequestedFloor int) Elevator { 
 	fmt.Println("Request Elevator to floor : ", FloorNumber)
 	time.Sleep(2000 * time.Millisecond)
@@ -97,7 +97,7 @@ func (controller *AppController) RequestElevator(FloorNumber, RequestedFloor int
 	return Elevator
 }
 
-// from userInput for AssignElevator
+// AssignElevator from userInput 
 func (controller *AppController) AssignElevator(RequestedFloor int) Elevator {
 	fmt.Println("Request Elevator to floor : ", RequestedFloor)
 	time.Sleep(2000 * time.Millisecond)
@@ -111,7 +111,7 @@ func (controller *AppController) AssignElevator(RequestedFloor int) Elevator {
 	return Elevator
 }
 
-//find the best Column
+// FindBestColumn with ResquestFloor
 func (b *Battery) FindBestColumn(RequestedFloor int) Column { 
 	if RequestedFloor >= 1 && RequestedFloor <= 7 { // B6(1) => B1(6) + RC(7)
 		return b.columnList[0]
@@ -125,7 +125,7 @@ func (b *Battery) FindBestColumn(RequestedFloor int) Column {
 	return b.columnList[0] //need to change 3 for ""
 }
 
-//find the beat elevator
+// FindBestElevator with RequestFloor, Direction
 func (c *Column) FindBestElevator(RequestedFloor int, userInput string) Elevator {
 	var selectedElevator = c.ElevatorList[4] 
 	for _, e := range c.ElevatorList {
@@ -142,7 +142,7 @@ func (c *Column) FindBestElevator(RequestedFloor int, userInput string) Elevator
 	return selectedElevator
 }
 
-//request Elevator
+// SendRequest to RequestFloor
 func (e *Elevator) SendRequest(RequestedFloor int) {
 	e.floorList = append(e.floorList, RequestedFloor)
 	if RequestedFloor > e.currentFloor {
@@ -174,7 +174,7 @@ func (e *Elevator) OperateElevator(RequestedFloor int) {
 	}
 }
 
-//function OpenDoor and CloseDoor
+// OpenDoor Elevator
 func (e *Elevator) OpenDoor() {
 	fmt.Println("Door is Opening")
 	time.Sleep(1 * time.Second)
@@ -182,6 +182,8 @@ func (e *Elevator) OpenDoor() {
 	time.Sleep(1 * time.Second)
 	e.CloseDoor()
 }
+
+// CloseDoor Elevator
 func (e *Elevator) CloseDoor() {
 	if e.doorstate == true {
 		fmt.Println("Door is Closing")
@@ -194,11 +196,11 @@ func (e *Elevator) CloseDoor() {
 	}
 }
 
-//function to mMoveUp
+// MoveUp Elevator
 func (e *Elevator) MoveUp(RequestedFloor int) {
 	fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Current Floor :", e.currentFloor)
 	for RequestedFloor > e.currentFloor {
-		e.currentFloor += 1
+		e.currentFloor ++
 		if RequestedFloor == e.currentFloor {
 			time.Sleep(1 * time.Second)
 			fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Reach the destination floor : ", e.currentFloor)
@@ -208,11 +210,11 @@ func (e *Elevator) MoveUp(RequestedFloor int) {
 	}
 }
 
-// function to MoveDown
-func (e *Elevator) MoveDown(RequestedFloor int) {
+// MoveDown Elevator
+func (e *Elevator) MoveDown(RequestedFloor int) { 
 	fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Current Floor :", e.currentFloor)
 	for RequestedFloor < e.currentFloor {
-		e.currentFloor -= 1
+		e.currentFloor --
 		if RequestedFloor == e.currentFloor {
 			time.Sleep(1 * time.Second)
 			fmt.Println("Column : ", e.Column.ColumnNumber, " Elevator : #", e.elevatorNumber, " Reach the destination floor : ", e.currentFloor)
