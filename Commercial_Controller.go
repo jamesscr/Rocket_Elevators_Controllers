@@ -113,16 +113,16 @@ func (controller *AppController) AssignElevator(RequestedFloor int) Elevator {
 
 //find the best Column
 func (b *Battery) FindBestColumn(RequestedFloor int) Column { 
-	if RequestedFloor >= 1 && RequestedFloor <= 7 {
+	if RequestedFloor >= 1 && RequestedFloor <= 7 { // B6(1) => B1(6) + RC(7)
 		return b.columnList[0]
-	} else if RequestedFloor > 8 && RequestedFloor <= 27 || RequestedFloor == 7 {
+	} else if RequestedFloor > 8 && RequestedFloor <= 26 || RequestedFloor == 7 { //RC(7) + 2=>20=8=>26
 		return b.columnList[1]
-	} else if RequestedFloor > 28 && RequestedFloor <= 47 || RequestedFloor == 7 {
+	} else if RequestedFloor > 27 && RequestedFloor <= 46 || RequestedFloor == 7 { //RC(7) + 21=>40=27=>46
 		return b.columnList[2]
-	} else if RequestedFloor > 48 && RequestedFloor <= 66 || RequestedFloor == 7 {
+	} else if RequestedFloor > 47 && RequestedFloor <= 66 || RequestedFloor == 7 { //RC(7) + 41=>60=47=>60
 		return b.columnList[3]
 	}
-	return b.columnList[3] //need to change 3 for ""
+	return b.columnList[0] //need to change 3 for ""
 }
 
 //find the beat elevator
@@ -231,31 +231,53 @@ func main()  {
     */
 	//column A
 
-	controller.arraybattery[0].columnList[0].ElevatorList[0].currentFloor = 3
-	controller.arraybattery[0].columnList[0].ElevatorList[0].state = "idle"
-	controller.arraybattery[0].columnList[0].ElevatorList[0].Direction = "stop"
-	// controller.arraybattery[0].columnList[0].ElevatorList[0].SendRequest(3)
+	// controller.arraybattery[0].columnList[0].ElevatorList[0].currentFloor = 6
+	// controller.arraybattery[0].columnList[0].ElevatorList[0].state = "moving"
+	// controller.arraybattery[0].columnList[0].ElevatorList[0].Direction = "up"
+	// controller.arraybattery[0].columnList[0].ElevatorList[0].SendRequest(7)
 
-	// controller.arraybattery[0].columnList[0].ElevatorList[1].currentFloor = 7
-	// controller.arraybattery[0].columnList[0].ElevatorList[1].state = "idle"
-	// controller.arraybattery[0].columnList[0].ElevatorList[1].Direction = "stop"
-	// // controller.arraybattery[0].columnList[0].ElevatorList[1].SendRequest(7)
+	// // controller.AssignElevator(7)
+	// controller.RequestElevator(3, 7)
+	
+	/* Scenario 1:
+    With second column (or column B) serving floors from 2 to 20, with elevator B1 at 20th floor going to 5th, B2 at 3rd floor going to 15th, B3 at 13th floor going to 1st, B4 at 15th floor going to 2nd, and B5 at 6th floor going to 1st, someone is at 1st floor and requests the 20th floor, elevator B5 is expected to be sent
+	*/
+	
+	//column B
 
-	// controller.arraybattery[0].columnList[0].ElevatorList[2].currentFloor = 4
-	// controller.arraybattery[0].columnList[0].ElevatorList[2].state = "moving"
-	// controller.arraybattery[0].columnList[0].ElevatorList[2].Direction = "down"
-	// //controller.arraybattery[0].columnList[0].ElevatorList[2].SendRequest(2)
+	// controller.arraybattery[0].columnList[1].ElevatorList[4].currentFloor = 12
+	// controller.arraybattery[0].columnList[1].ElevatorList[4].state = "moving"
+	// controller.arraybattery[0].columnList[1].ElevatorList[4].Direction = "down"
+	// controller.arraybattery[0].columnList[1].ElevatorList[4].SendRequest(7)
 
-	// controller.arraybattery[0].columnList[0].ElevatorList[3].currentFloor = 1
-	// controller.arraybattery[0].columnList[0].ElevatorList[3].state = "moving"
-	// controller.arraybattery[0].columnList[0].ElevatorList[3].Direction = "up"
-	// //controller.arraybattery[0].columnList[0].ElevatorList[3].SendRequest(7)
-
-	// controller.arraybattery[0].columnList[0].ElevatorList[4].currentFloor = 6
-	// controller.arraybattery[0].columnList[0].ElevatorList[4].state = "moving"
-	// controller.arraybattery[0].columnList[0].ElevatorList[4].Direction = "down"
-	// //controller.arraybattery[0].columnList[0].ElevatorList[4].SendRequest(1)
-
-	// // controller.AssignElevator(1)
-	controller.RequestElevator(4, 7)
+	// // controller.AssignElevator(26)
+	// controller.RequestElevator(7, 26)
+	
+	/* Scenario 2:
+    With third column (or column C) serving floors from 21 to 40, with elevator C1 at 1st floor going to 21th, C2 at 23st floor going to 28th, C3 at 33rd floor going to 1st, C4 at 40th floor going to 24th, and C5 at 39nd floor going to 1st, someone is at 1st floor and requests the 36th floor, elevator C1 is expected to be sent
+	*/
+	
+	//column C
+	
+	// controller.arraybattery[0].columnList[2].ElevatorList[0].currentFloor = 7
+	// controller.arraybattery[0].columnList[2].ElevatorList[0].state = "moving"
+	// controller.arraybattery[0].columnList[2].ElevatorList[0].Direction = "up"
+	// controller.arraybattery[0].columnList[2].ElevatorList[0].SendRequest(7)
+	
+	// //controller.AssignElevator(27)
+	// controller.RequestElevator(27, 42)
+	
+	/* Scenario 3:
+    With fourth column (or column D) serving floors from 41 to 60, with elevator D1 at 58th floor going to 1st, D2 at 50th floor going to 60th, D3 at 46th floor going to 58th, D4 at 1st floor going to 54th, and D5 at 60th floor going to 1st, someone is at 54th floor and requests the 1st floor, elevator D1 is expected to pick him up
+	*/
+	
+	//column D
+	
+	controller.arraybattery[0].columnList[3].ElevatorList[0].currentFloor = 64
+	controller.arraybattery[0].columnList[3].ElevatorList[0].state = "moving"
+	controller.arraybattery[0].columnList[3].ElevatorList[0].Direction = "down"
+	controller.arraybattery[0].columnList[3].ElevatorList[0].SendRequest(7)
+ 
+    //controller.AssignElevator(60)
+    controller.RequestElevator(60, 7)
 }
