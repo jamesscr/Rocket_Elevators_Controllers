@@ -233,33 +233,33 @@ func main()  {
     */
 	//column A
 	
-	// controller.arraybattery[0].columnList[0].ElevatorList[0].currentFloor = 3
-	// controller.arraybattery[0].columnList[0].ElevatorList[0].state = "idle"
-	// controller.arraybattery[0].columnList[0].ElevatorList[0].Direction = "stop"
-	// controller.arraybattery[0].columnList[0].ElevatorList[0].SendRequest(3)
+	controller.arraybattery[0].columnList[0].ElevatorList[0].currentFloor = 3
+	controller.arraybattery[0].columnList[0].ElevatorList[0].state = "idle"
+	controller.arraybattery[0].columnList[0].ElevatorList[0].Direction = "stopped"
+	controller.arraybattery[0].columnList[0].ElevatorList[0].SendRequest(3)
 	
-	// controller.arraybattery[0].columnList[0].ElevatorList[1].currentFloor = 7
-	// controller.arraybattery[0].columnList[0].ElevatorList[1].state = "idle"
-	// controller.arraybattery[0].columnList[0].ElevatorList[1].Direction = "stop"
-	// controller.arraybattery[0].columnList[0].ElevatorList[1].SendRequest(7)
+	controller.arraybattery[0].columnList[0].ElevatorList[1].currentFloor = 7
+	controller.arraybattery[0].columnList[0].ElevatorList[1].state = "idle"
+	controller.arraybattery[0].columnList[0].ElevatorList[1].Direction = "stopped"
+	controller.arraybattery[0].columnList[0].ElevatorList[1].SendRequest(7)
 	
 	// controller.arraybattery[0].columnList[0].ElevatorList[2].currentFloor = 4
 	// controller.arraybattery[0].columnList[0].ElevatorList[2].state = "moving"
 	// controller.arraybattery[0].columnList[0].ElevatorList[2].Direction = "down"
 	// controller.arraybattery[0].columnList[0].ElevatorList[2].SendRequest(2)
 
-	controller.arraybattery[0].columnList[0].ElevatorList[3].currentFloor = 1
-	controller.arraybattery[0].columnList[0].ElevatorList[3].state = "moving"
-	controller.arraybattery[0].columnList[0].ElevatorList[3].Direction = "up"
-	controller.arraybattery[0].columnList[0].ElevatorList[3].SendRequest(7)
+	// controller.arraybattery[0].columnList[0].ElevatorList[3].currentFloor = 1
+	// controller.arraybattery[0].columnList[0].ElevatorList[3].state = "moving"
+	// controller.arraybattery[0].columnList[0].ElevatorList[3].Direction = "up"
+	// controller.arraybattery[0].columnList[0].ElevatorList[3].SendRequest(7)
 	
 	// controller.arraybattery[0].columnList[0].ElevatorList[4].currentFloor = 6
 	// controller.arraybattery[0].columnList[0].ElevatorList[4].state = "moving"
 	// controller.arraybattery[0].columnList[0].ElevatorList[4].Direction = "up"
 	// controller.arraybattery[0].columnList[0].ElevatorList[4].SendRequest(1)
 
-	// controller.AssignElevator(4)
-	controller.RequestElevator(4, 7)
+	//controller.AssignElevator(4)
+	// controller.RequestElevator(4, 7)
 
 	/* Scenario 1:
     With second column (or column B) serving floors from 2 to 20, with elevator B1 at 20th floor going to 5th, B2 at 3rd floor going to 15th, B3 at 13th floor going to 1st, B4 at 15th floor going to 2nd, and B5 at 6th floor going to 1st, someone is at 1st floor and requests the 20th floor, elevator B5 is expected to be sent
