@@ -5,7 +5,7 @@ using System.Threading;
 namespace Commercial_controller
 {
 
-    public class AppController
+    public class ElevatorController
     {
         public int nbFloor;
         public int nbEleInColumn;
@@ -14,7 +14,7 @@ namespace Commercial_controller
         public Battery battery;
         public List<int> shortestList;
 
-        public AppController(int nbFloor, int nbColumn, int nbEleInColumn, string userMove)
+        public ElevatorController(int nbFloor, int nbColumn, int nbEleInColumn, string userMove)
         {
             this.nbFloor = nbFloor;
             this.nbColumn = nbColumn;
@@ -352,7 +352,7 @@ namespace Commercial_controller
         {
             public static void Main(string[] args)
             {
-                AppController controller = new AppController(66, 4, 5, "stop");
+                ElevatorController controller = new ElevatorController(66, 4, 5, "stop");
 
 
                 // Test
@@ -362,31 +362,31 @@ namespace Commercial_controller
                 controller.battery.column_list[0].eleList[0].currentFloor = 3;
                 controller.battery.column_list[0].eleList[0].Direction = "stop";
                 controller.battery.column_list[0].eleList[0].status = "idle";
-                //controller.battery.column_list[0].eleList[0].floorList.Add(3);
+                controller.battery.column_list[0].eleList[0].floorList.Add(3);
 
 
                 controller.battery.column_list[0].eleList[1].currentFloor = 7;
                 controller.battery.column_list[0].eleList[1].Direction = "stop";
                 controller.battery.column_list[0].eleList[1].status = "idle";
-                //controller.battery.column_list[0].eleList[1].floorList.Add(7);
+                controller.battery.column_list[0].eleList[1].floorList.Add(7);
 
 
                 controller.battery.column_list[0].eleList[2].currentFloor = 4;
                 controller.battery.column_list[0].eleList[2].Direction = "down";
                 controller.battery.column_list[0].eleList[2].status = "moving";
-                //controller.battery.column_list[0].eleList[2].floorList.Add(2);
+                controller.battery.column_list[0].eleList[2].floorList.Add(2);
 
 
                 controller.battery.column_list[0].eleList[3].currentFloor = 1;
                 controller.battery.column_list[0].eleList[3].Direction = "up";
                 controller.battery.column_list[0].eleList[3].status = "moving";
-                //controller.battery.column_list[0].eleList[3].floorList.Add(7);
+                controller.battery.column_list[0].eleList[3].floorList.Add(7);
 
 
                 controller.battery.column_list[0].eleList[4].currentFloor = 6;
                 controller.battery.column_list[0].eleList[4].Direction = "down";
                 controller.battery.column_list[0].eleList[4].status = "moving";
-                //controller.battery.column_list[0].eleList[4].floorList.Add(1);
+                controller.battery.column_list[0].eleList[4].floorList.Add(1);
 
                 // controller.assignElevator(1);
                 Elevator elevator = controller.RequestElevator(4, 7);
