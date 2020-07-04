@@ -38,12 +38,12 @@ namespace Commercial_controller
             }
             else
             {
-                if (elevator.currentFloor > floorNumber) 
+                if (elevator.currentFloor > floorNumber) //&& elevator.Direction == "down") 
                 {
                     elevator.Request(floorNumber, column.columnNumber);
                     elevator.Request(requestedFloor, column.columnNumber);
                 }
-                else if (elevator.currentFloor < floorNumber) 
+                else if (elevator.currentFloor < floorNumber) //&& elevator.Direction == "up")
                 {
                     elevator.Move_down(requestedFloor, column.columnNumber);
                     elevator.Request(floorNumber, column.columnNumber);
@@ -96,7 +96,7 @@ namespace Commercial_controller
                 checkEle(requestedFloor, columnNumber);
             }
 
-            // task (up or down)
+            // task for 2 direction (up/down)
             public void checkEle(int requestedFloor, char columnNumber)
             {
                 if (requestedFloor == currentFloor)
@@ -133,7 +133,7 @@ namespace Commercial_controller
                 }
 
             }
-            // Open and Close Door
+            // Open/Close Door
             public void Open_door()
             {
                 Thread.Sleep(2000);
@@ -161,7 +161,7 @@ namespace Commercial_controller
                 }
             }
 
-            // move up
+            // moving direction
 
             public void Move_up(int requestedFloor, char columnNumber)
             {
@@ -175,7 +175,7 @@ namespace Commercial_controller
                     Thread.Sleep(200);
                 }
             }
-            // move down
+
             public void Move_down(int requestedFloor, char columnNumber)
             {
                 Console.WriteLine("Column : " + columnNumber + " Elevator : #" + eleNumber + "  Current Floor : " + this.currentFloor);
@@ -193,7 +193,7 @@ namespace Commercial_controller
 
         }
 
-        // column class 
+        // column redirect to best column create elevator
 
         public class Column
         {
@@ -203,7 +203,7 @@ namespace Commercial_controller
             public List<Elevator> eleList;
             public List<int> call_button_list;
 
-        // creates elevator
+
             public Column(char columnNumber, int nbFloor, int nbEleInColumn)
             {
                 this.columnNumber = columnNumber;
@@ -264,14 +264,14 @@ namespace Commercial_controller
             }
 
         }
-        // battery class 
+        // battery create column  
         public class Battery
         {
             public string battery_status;
             public int nbColumn;
             public List<Column> column_list;
 
-           // creates column 
+
             public Battery(int nbColumn)
             {
                 this.nbColumn = nbColumn;
