@@ -12,7 +12,7 @@
 4. Column d Senario 3 uncomment from lines (325 to 346)
 |                                                     |
 *******************************************************
-| *******To run from Commercial_Controller.cs*********|
+|***************To run from Program.cs****************|
 |*********In the Commercial_Controller folder*********|
 1. Column A Senario 4 uncomment from lines (362 to 392)
 2. Column B Senario 1 uncomment from lines (269 to 423)
