@@ -238,27 +238,27 @@ func main()  {
 	
 	//column A
 	
-	// A1 idle at B4 
+	
 	controller.arraybattery[0].columnList[0].ElevatorList[0].currentFloor = 3
 	controller.arraybattery[0].columnList[0].ElevatorList[0].state = "idle"
 	controller.arraybattery[0].columnList[0].ElevatorList[0].Direction = "stopped"
 	
-	// A2 idle at RC
+	
 	controller.arraybattery[0].columnList[0].ElevatorList[1].currentFloor = 7
 	controller.arraybattery[0].columnList[0].ElevatorList[1].state = "idle"
 	controller.arraybattery[0].columnList[0].ElevatorList[1].Direction = "stopped"
 	
-	// A3 at B3 moving down to B5
+	
 	controller.arraybattery[0].columnList[0].ElevatorList[2].currentFloor = 4
 	controller.arraybattery[0].columnList[0].ElevatorList[2].state = "moving"
 	controller.arraybattery[0].columnList[0].ElevatorList[2].Direction = "down"
 	
-    // A4 at B6 moving sent to B3 then to RC
+    
 	controller.arraybattery[0].columnList[0].ElevatorList[3].currentFloor = 1
 	controller.arraybattery[0].columnList[0].ElevatorList[3].state = "moving"
 	controller.arraybattery[0].columnList[0].ElevatorList[3].Direction = "up"
 	
-	// A5 at B1 moving down to B6
+	
 	controller.arraybattery[0].columnList[0].ElevatorList[4].currentFloor = 6
 	controller.arraybattery[0].columnList[0].ElevatorList[4].state = "moving"
 	controller.arraybattery[0].columnList[0].ElevatorList[4].Direction = "down"
